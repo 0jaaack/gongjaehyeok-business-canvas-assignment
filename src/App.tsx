@@ -1,11 +1,23 @@
 import { StyleProvider } from '@ant-design/cssinjs';
-import { ConfigProvider, type ThemeConfig, Typography } from 'antd';
-
-const { Text } = Typography;
+import { ConfigProvider, type ThemeConfig } from 'antd';
+import MembersTable from './components/MembersTable';
 
 const globalTheme: ThemeConfig = {
   token: {
     fontFamily: 'Pretendard, -apple-system, system-ui, sans-serif',
+    colorBgContainer: '#ffffff',
+  },
+  components: {
+    Typography: {
+      titleMarginTop: 0,
+      titleMarginBottom: 0,
+    },
+    Layout: {
+      headerBg: '#ffffff',
+    },
+    Table: {
+      headerBorderRadius: 0,
+    },
   },
 };
 
@@ -13,7 +25,7 @@ function App() {
   return (
     <StyleProvider>
       <ConfigProvider theme={globalTheme}>
-        <Text className="text-3xl">Business Canvas Assignment</Text>
+        <MembersTable />
       </ConfigProvider>
     </StyleProvider>
   );
