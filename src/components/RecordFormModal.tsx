@@ -1,19 +1,35 @@
+import { useEffect, useState } from 'react';
 import { Button, Modal, type ModalProps, Typography, Checkbox, DatePicker, Form, Input, Select } from 'antd';
 import { createStyles } from 'antd-style';
+import type { Rule } from 'antd/es/form';
 import { CloseOutlined } from '@ant-design/icons';
-import { type RecordSchema } from '../records/types';
+import { type RecordSchema, type RecordSchemaToType } from '../records/types';
 import { useModal } from '../hooks/useModal';
 import dayjs from 'dayjs';
 
+const textFieldDefaultRule: Rule = { max: 20, message: '글자수 20을 초과할 수 없습니다.' };
+const textareaFieldDefaultRule: Rule = { max: 50, message: '글자수 50을 초과할 수 없습니다.' };
+
 export type RecordFormModalProps<T extends RecordSchema> = ModalProps & {
   record: T;
+  onSubmit: (record: RecordSchemaToType<T>) => void;
 };
 
 export function RecordFormModal<T extends RecordSchema>(props: RecordFormModalProps<T>) {
-  const { record, ...restProps } = props;
+  const { record, onSubmit, ...restProps } = props;
 
   const { styles } = useStyle();
   const { closeModal } = useModal();
+
+  const [form] = Form.useForm();
+  const values = Form.useWatch([], form);
+  const [isSubmittable, setIsSubmittable] = useState(false);
+
+  useEffect(() => {
+    form.validateFields({ validateOnly: true })
+      .then(() => setIsSubmittable(true))
+      .catch(() => setIsSubmittable(false));
+  }, [form, values]);
 
   return (
     <Modal
@@ -26,17 +42,27 @@ export function RecordFormModal<T extends RecordSchema>(props: RecordFormModalPr
         </>
       )}
       okText="추가"
+      okButtonProps={{ disabled: !isSubmittable }}
+      onOk={() => {
+        onSubmit(form.getFieldsValue());
+        closeModal();
+      }}
       cancelText="취소"
       closeIcon={null}
       {...restProps}
     >
-      <Form layout="vertical" className={styles.form}>
+      <Form layout="vertical" className={styles.form} form={form}>
         {record.map(field => (
           <Form.Item
             key={field.name}
             label={field.label}
             name={field.name}
             required={field.required}
+            rules={[
+              ...(field.required ? [{ required: true, message: `${field.label}은 필수 입력 항목입니다.` }] : []),
+              ...(field.type === 'text' ? [textFieldDefaultRule] : []),
+              ...(field.type === 'textarea' ? [textareaFieldDefaultRule] : []),
+            ]}
             {...(field.type === 'checkbox' ? { valuePropName: 'checked' } : {})}
             {...(field.type === 'date'
               ? {

@@ -7,12 +7,13 @@ import { MoreOutlined, PlusOutlined } from '@ant-design/icons';
 import { MemberRecord, type Member } from '../records/member';
 import type { RecordSchema, RecordSchemaToType } from '../records/types';
 import { useModal } from '../hooks/useModal';
+import { useState } from 'react';
 import { RecordFormModal } from './RecordFormModal';
 
 const { Header, Content } = Layout;
 const { Title } = Typography;
 
-const dataSource: (Member & { key: string })[] = [
+const defaultMembers: (Member & { key: string })[] = [
   {
     key: '1',
     name: 'John Doe',
@@ -36,7 +37,7 @@ const dataSource: (Member & { key: string })[] = [
 const columns: TableColumnType<Member>[] = [
   convertRecordToColumn(MemberRecord, 'name', {
     width: 120,
-    filters: Array.from(new Set(dataSource.map(member => member.name))).map(name => ({
+    filters: Array.from(new Set(defaultMembers.map(member => member.name))).map(name => ({
       text: name,
       value: name,
     })),
@@ -45,7 +46,7 @@ const columns: TableColumnType<Member>[] = [
   }),
   convertRecordToColumn(MemberRecord, 'address', {
     width: 249,
-    filters: Array.from(new Set(dataSource.map(member => member.address))).map(address => ({
+    filters: Array.from(new Set(defaultMembers.map(member => member.address))).map(address => ({
       text: address,
       value: address,
     })),
@@ -54,7 +55,7 @@ const columns: TableColumnType<Member>[] = [
   }),
   convertRecordToColumn(MemberRecord, 'memo', {
     width: 249,
-    filters: Array.from(new Set(dataSource.map(member => member.memo))).map(memo => ({
+    filters: Array.from(new Set(defaultMembers.map(member => member.memo))).map(memo => ({
       text: memo,
       value: memo,
     })),
@@ -63,7 +64,7 @@ const columns: TableColumnType<Member>[] = [
   }),
   convertRecordToColumn(MemberRecord, 'joinDate', {
     width: 200,
-    filters: Array.from(new Set(dataSource.map(member => member.joinDate))).map(joinDate => ({
+    filters: Array.from(new Set(defaultMembers.map(member => member.joinDate))).map(joinDate => ({
       text: joinDate,
       value: joinDate,
     })),
@@ -72,7 +73,7 @@ const columns: TableColumnType<Member>[] = [
   }),
   convertRecordToColumn(MemberRecord, 'job', {
     width: 249,
-    filters: Array.from(new Set(dataSource.map(member => member.job))).map(job => ({
+    filters: Array.from(new Set(defaultMembers.map(member => member.job))).map(job => ({
       text: job,
       value: job,
     })),
@@ -111,8 +112,13 @@ function MembersTable() {
   const { styles } = useStyle();
   const { openModal } = useModal();
 
+  const [members, setMembers] = useState<(Member & { key: string })[]>(defaultMembers);
+
   const handleAddMemberButtonClick = () => {
-    openModal(<RecordFormModal record={MemberRecord} />);
+    const addMember = (record: Member) => {
+      setMembers(prev => [...prev, { ...record, key: (prev.length + 1).toString() }]);
+    };
+    openModal(<RecordFormModal record={MemberRecord} onSubmit={addMember} />);
   };
 
   return (
@@ -131,7 +137,7 @@ function MembersTable() {
       <Content>
         <Table
           className={styles.table}
-          dataSource={dataSource}
+          dataSource={members}
           columns={columns}
           pagination={false}
           rowSelection={rowSelection}
