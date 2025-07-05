@@ -11,6 +11,7 @@ describe('<MembersTable />', () => {
     const screen = render(<MembersTable />);
 
     expect(screen.getByText('회원 목록')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'plus 추가' })).toBeInTheDocument();
     expect(screen.getByRole('columnheader', { name: '이름 filter' })).toBeInTheDocument();
     expect(screen.getByRole('columnheader', { name: '주소 filter' })).toBeInTheDocument();
     expect(screen.getByRole('columnheader', { name: '메모 filter' })).toBeInTheDocument();

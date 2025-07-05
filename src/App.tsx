@@ -6,6 +6,7 @@ const globalTheme: ThemeConfig = {
   token: {
     fontFamily: 'Pretendard, -apple-system, system-ui, sans-serif',
     colorBgContainer: '#ffffff',
+    colorPrimary: '#4A7CFE',
   },
   components: {
     Typography: {

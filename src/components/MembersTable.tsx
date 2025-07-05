@@ -3,7 +3,7 @@ import type { TableRowSelection } from 'antd/es/table/interface';
 import { createStyles } from 'antd-style';
 import { TableFilterDropdownMenu } from './TableFilterDropdownMenu';
 import { TableRecordDropdown } from './TableRecordDropdown';
-import { MoreOutlined } from '@ant-design/icons';
+import { MoreOutlined, PlusOutlined } from '@ant-design/icons';
 
 const { Header, Content } = Layout;
 const { Title } = Typography;
@@ -138,6 +138,7 @@ function MembersTable() {
     <Layout>
       <Header className={styles.header}>
         <Title level={5}>회원 목록</Title>
+        <Button className={styles.addButton} type="primary" icon={<PlusOutlined />}>추가</Button>
       </Header>
       <Content>
         <Table dataSource={dataSource} columns={columns} pagination={false} rowSelection={rowSelection} className={styles.table} />
@@ -149,9 +150,17 @@ function MembersTable() {
 const useStyle = createStyles(({ css, prefixCls, token }) => {
   return {
     header: css`
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       height: fit-content;
       padding: 8px 14px;
       border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    `,
+    addButton: css`
+      width: 73px;
+      padding-inline: 12px;
+      border-radius: 8px;
     `,
     table: css`
       .${prefixCls}-table-thead {
