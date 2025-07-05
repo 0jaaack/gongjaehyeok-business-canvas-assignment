@@ -1,6 +1,7 @@
 import { Checkbox, Layout, Table, Typography, type TableColumnType } from 'antd';
 import type { TableRowSelection } from 'antd/es/table/interface';
 import { createStyles } from 'antd-style';
+import { TableFilterDropdownMenu } from './TableFilterDropdownMenu';
 
 const { Header, Content } = Layout;
 const { Title } = Typography;
@@ -13,46 +14,6 @@ type Member = {
   job: string;
   isEmailAgreed: boolean;
 };
-
-const columns: TableColumnType<Member>[] = [
-  {
-    title: '이름',
-    dataIndex: 'name',
-    key: 'name',
-    width: 120,
-  },
-  {
-    title: '주소',
-    dataIndex: 'address',
-    key: 'address',
-    width: 249,
-  },
-  {
-    title: '메모',
-    dataIndex: 'memo',
-    key: 'memo',
-    width: 249,
-  },
-  {
-    title: '가입일',
-    dataIndex: 'joinDate',
-    key: 'joinDate',
-    width: 200,
-  },
-  {
-    title: '직업',
-    dataIndex: 'job',
-    key: 'job',
-    width: 249,
-  },
-  {
-    title: '이메일 수신 동의',
-    dataIndex: 'isEmailAgreed',
-    key: 'isEmailAgreed',
-    width: 150,
-    render: (_, record) => <Checkbox checked={record.isEmailAgreed} />,
-  },
-];
 
 const dataSource: (Member & { key: string })[] = [
   {
@@ -72,6 +33,82 @@ const dataSource: (Member & { key: string })[] = [
     joinDate: '2024-10-01',
     job: 'po',
     isEmailAgreed: false,
+  },
+];
+
+const columns: TableColumnType<Member>[] = [
+  {
+    title: '이름',
+    dataIndex: 'name',
+    key: 'name',
+    width: 120,
+    filters: Array.from(new Set(dataSource.map(member => member.name))).map(name => ({
+      text: name,
+      value: name,
+    })),
+    filterDropdown: filterDropdownProps => <TableFilterDropdownMenu {...filterDropdownProps} />,
+  },
+  {
+    title: '주소',
+    dataIndex: 'address',
+    key: 'address',
+    width: 249,
+    filters: Array.from(new Set(dataSource.map(member => member.address))).map(address => ({
+      text: address,
+      value: address,
+    })),
+    filterDropdown: filterDropdownProps => <TableFilterDropdownMenu {...filterDropdownProps} />,
+  },
+  {
+    title: '메모',
+    dataIndex: 'memo',
+    key: 'memo',
+    width: 249,
+    filters: Array.from(new Set(dataSource.map(member => member.memo))).map(memo => ({
+      text: memo,
+      value: memo,
+    })),
+    filterDropdown: filterDropdownProps => <TableFilterDropdownMenu {...filterDropdownProps} />,
+  },
+  {
+    title: '가입일',
+    dataIndex: 'joinDate',
+    key: 'joinDate',
+    width: 200,
+    filters: Array.from(new Set(dataSource.map(member => member.joinDate))).map(joinDate => ({
+      text: joinDate,
+      value: joinDate,
+    })),
+    filterDropdown: filterDropdownProps => <TableFilterDropdownMenu {...filterDropdownProps} />,
+  },
+  {
+    title: '직업',
+    dataIndex: 'job',
+    key: 'job',
+    width: 249,
+    filters: Array.from(new Set(dataSource.map(member => member.job))).map(job => ({
+      text: job,
+      value: job,
+    })),
+    filterDropdown: filterDropdownProps => <TableFilterDropdownMenu {...filterDropdownProps} />,
+  },
+  {
+    title: '이메일 수신 동의',
+    dataIndex: 'isEmailAgreed',
+    key: 'isEmailAgreed',
+    width: 150,
+    render: (_, record) => <Checkbox checked={record.isEmailAgreed} />,
+    filters: [
+      {
+        text: '선택됨',
+        value: true,
+      },
+      {
+        text: '선택 안함',
+        value: false,
+      },
+    ],
+    filterDropdown: filterDropdownProps => <TableFilterDropdownMenu {...filterDropdownProps} />,
   },
 ];
 
@@ -103,6 +140,12 @@ const useStyle = createStyles(({ css, prefixCls, token }) => {
       .${prefixCls}-table-thead {
         .${prefixCls}-table-cell {
           padding: 8px;
+          .${prefixCls}-table-filter-column {
+            gap: 8px;
+            .${prefixCls}-table-filter-trigger {
+              margin: 0;
+            }
+          }
         }
       }
       .${prefixCls}-table-tbody {
