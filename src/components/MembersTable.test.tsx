@@ -111,4 +111,25 @@ describe('<MembersTable />', () => {
 
     expect(screen.queryByRole('cell', { name: 'John Doe' })).not.toBeInTheDocument();
   });
+
+  it('수정 버튼을 클릭하면 회원 정보가 수정된다.', async () => {
+    const wrapper = createModalWrapper();
+    const screen = render(<MembersTable />, { wrapper });
+
+    const rows = screen.getAllByRole('row');
+    await userEvent.click(within(rows[1]).getByRole('button', { name: 'More Options' }));
+    await userEvent.click(screen.getByRole('menuitem', { name: '수정' }));
+
+    await userEvent.clear(screen.getByRole('textbox', { name: '이름' }));
+    await userEvent.type(screen.getByRole('textbox', { name: '이름' }), 'Jack');
+
+    expect(screen.getByRole('button', { name: '수정' })).toBeEnabled();
+    await userEvent.click(screen.getByRole('button', { name: '수정' }));
+
+    expect(screen.getByRole('cell', { name: 'Jack' })).toBeInTheDocument();
+
+    await userEvent.click(screen.getAllByRole('button', { name: 'filter' })[0]);
+    expect(screen.getByRole('menuitem', { name: 'Jack' })).toBeInTheDocument();
+    expect(screen.getByRole('menuitem', { name: 'Foo Bar' })).toBeInTheDocument();
+  });
 });

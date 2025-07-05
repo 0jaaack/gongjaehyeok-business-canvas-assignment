@@ -14,11 +14,12 @@ export type RecordFormModalProps<T extends RecordSchema> = ModalProps & {
   title: string;
   okText: string;
   record: T;
+  defaultValues?: RecordSchemaToType<T>;
   onSubmit: (record: RecordSchemaToType<T>) => void;
 };
 
 export function RecordFormModal<T extends RecordSchema>(props: RecordFormModalProps<T>) {
-  const { title, okText, record, onSubmit, ...restProps } = props;
+  const { title, okText, record, defaultValues, onSubmit, ...restProps } = props;
 
   const { styles } = useStyle();
   const { closeModal } = useModal();
@@ -53,7 +54,7 @@ export function RecordFormModal<T extends RecordSchema>(props: RecordFormModalPr
       closeIcon={null}
       {...restProps}
     >
-      <Form layout="vertical" className={styles.form} form={form}>
+      <Form layout="vertical" className={styles.form} initialValues={defaultValues} form={form}>
         {record.map(field => (
           <Form.Item
             key={field.name}

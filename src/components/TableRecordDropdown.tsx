@@ -6,17 +6,19 @@ const { Text } = Typography;
 
 export type TableRecordDropdownProps = {
   children: ReactNode;
+  onEdit: () => void;
   onDelete: () => void;
 };
 
 export function TableRecordDropdown(props: TableRecordDropdownProps) {
-  const { children, onDelete } = props;
+  const { children, onEdit, onDelete } = props;
   const { styles } = useStyle();
 
   const items: MenuProps['items'] = [
     {
       key: '1',
       label: <Text>수정</Text>,
+      onClick: onEdit,
     },
     {
       type: 'divider',

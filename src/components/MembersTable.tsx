@@ -49,6 +49,13 @@ function MembersTable() {
     openModal(<RecordFormModal title="회원 추가" okText="추가" record={MemberRecord} onSubmit={addMember} />);
   };
 
+  const handleEditMemberButtonClick = (index: number) => {
+    const editMember = (record: Member) => {
+      setMembers(prev => prev.map((member, i) => i === index ? { ...member, ...record } : member));
+    };
+    openModal(<RecordFormModal title="회원 수정" okText="수정" record={MemberRecord} defaultValues={members[index]} onSubmit={editMember} />);
+  };
+
   const handleDeleteMemberButtonClick = (index: number) => {
     setMembers(prev => prev.filter((_, i) => i !== index));
   };
@@ -118,7 +125,10 @@ function MembersTable() {
       title: '',
       width: 48,
       render: (_, __, index) => (
-        <TableRecordDropdown onDelete={() => handleDeleteMemberButtonClick(index)}>
+        <TableRecordDropdown
+          onEdit={() => handleEditMemberButtonClick(index)}
+          onDelete={() => handleDeleteMemberButtonClick(index)}
+        >
           <Button aria-label="More Options" type="text" icon={<MoreOutlined />} />
         </TableRecordDropdown>
       ),
