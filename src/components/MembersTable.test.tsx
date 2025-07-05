@@ -26,6 +26,7 @@ describe('<MembersTable />', () => {
     expect(within(rows[1]).getByRole('cell', { name: '2024-10-02' })).toBeInTheDocument();
     expect(within(rows[1]).getByRole('cell', { name: 'developer' })).toBeInTheDocument();
     expect(within(rows[1]).getAllByRole('checkbox').length).toBe(2);
+    expect(within(rows[1]).getByRole('button', { name: 'More Options' })).toBeInTheDocument();
 
     expect(within(rows[2]).getByRole('cell', { name: 'Foo Bar' })).toBeInTheDocument();
     expect(within(rows[2]).getByRole('cell', { name: '서울 서초구' })).toBeInTheDocument();
@@ -33,6 +34,7 @@ describe('<MembersTable />', () => {
     expect(within(rows[2]).getByRole('cell', { name: '2024-10-01' })).toBeInTheDocument();
     expect(within(rows[2]).getByRole('cell', { name: 'po' })).toBeInTheDocument();
     expect(within(rows[2]).getAllByRole('checkbox').length).toBe(2);
+    expect(within(rows[2]).getByRole('button', { name: 'More Options' })).toBeInTheDocument();
   });
 
   it('필터 아이콘을 클릭하면 드롭다운 메뉴가 나타난다.', () => {
@@ -47,5 +49,15 @@ describe('<MembersTable />', () => {
     fireEvent.click(screen.getByRole('menuitem', { name: 'John Doe' }));
     expect(screen.getByRole('cell', { name: 'John Doe' })).toBeInTheDocument();
     expect(screen.queryByRole('cell', { name: 'Foo Bar' })).not.toBeInTheDocument();
+  });
+
+  it('각 행에 있는 더보기 버튼을 클릭하면 드롭다운 메뉴가 나타난다.', () => {
+    const screen = render(<MembersTable />);
+
+    const moreOptionsButton = screen.getAllByRole('button', { name: 'More Options' })[0];
+    fireEvent.click(moreOptionsButton);
+
+    expect(screen.getByRole('menuitem', { name: '수정' })).toBeInTheDocument();
+    expect(screen.getByRole('menuitem', { name: '삭제' })).toBeInTheDocument();
   });
 });

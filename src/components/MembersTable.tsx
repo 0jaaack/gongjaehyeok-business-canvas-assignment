@@ -1,7 +1,9 @@
-import { Checkbox, Layout, Table, Typography, type TableColumnType } from 'antd';
+import { Button, Checkbox, Layout, Table, Typography, type TableColumnType } from 'antd';
 import type { TableRowSelection } from 'antd/es/table/interface';
 import { createStyles } from 'antd-style';
 import { TableFilterDropdownMenu } from './TableFilterDropdownMenu';
+import { TableRecordDropdown } from './TableRecordDropdown';
+import { MoreOutlined } from '@ant-design/icons';
 
 const { Header, Content } = Layout;
 const { Title } = Typography;
@@ -116,6 +118,15 @@ const columns: TableColumnType<Member>[] = [
     onFilter: (value, record) => record.isEmailAgreed === value,
     filterDropdown: filterDropdownProps => <TableFilterDropdownMenu {...filterDropdownProps} />,
   },
+  {
+    title: '',
+    width: 48,
+    render: () => (
+      <TableRecordDropdown>
+        <Button aria-label="More Options" type="text" icon={<MoreOutlined />} />
+      </TableRecordDropdown>
+    ),
+  },
 ];
 
 const rowSelection: TableRowSelection<Member> = {};
@@ -160,6 +171,9 @@ const useStyle = createStyles(({ css, prefixCls, token }) => {
         }
         .${prefixCls}-table-selection-column {
           border-inline: 1px solid ${token.colorBorderSecondary};
+        }
+        .${prefixCls}-table-cell:has(button[aria-label='More Options']) {
+          padding: 0;
         }
       }
     `,

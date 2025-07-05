@@ -18,6 +18,10 @@ const globalTheme: ThemeConfig = {
     Table: {
       headerBorderRadius: 0,
     },
+    Button: {
+      defaultColor: '#000000a5',
+      textTextColor: '#000000a5',
+    },
   },
 };
 
