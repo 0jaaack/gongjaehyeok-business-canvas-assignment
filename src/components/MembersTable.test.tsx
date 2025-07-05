@@ -1,6 +1,7 @@
 import { render, within, fireEvent, cleanup } from '@testing-library/react';
 import { describe, it, expect, afterEach } from 'vitest';
 import MembersTable from './MembersTable';
+import { createModalWrapper } from '../fixtures/wrappers';
 
 describe('<MembersTable />', () => {
   afterEach(() => {
@@ -60,5 +61,21 @@ describe('<MembersTable />', () => {
 
     expect(screen.getByRole('menuitem', { name: '수정' })).toBeInTheDocument();
     expect(screen.getByRole('menuitem', { name: '삭제' })).toBeInTheDocument();
+  });
+
+  it('추가 버튼을 클릭하면 회원 추가 모달이 나타난다.', async () => {
+    const wrapper = createModalWrapper();
+    const screen = render(<MembersTable />, { wrapper });
+
+    fireEvent.click(screen.getByRole('button', { name: 'plus 추가' }));
+
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    expect(screen.getByText('회원 추가')).toBeInTheDocument();
+    expect(screen.getByRole('textbox', { name: '이름' })).toBeInTheDocument();
+    expect(screen.getByRole('textbox', { name: '주소' })).toBeInTheDocument();
+    expect(screen.getByRole('textbox', { name: '메모' })).toBeInTheDocument();
+    expect(screen.getByRole('textbox', { name: '가입일' })).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: '직업' })).toBeInTheDocument();
+    expect(screen.getByRole('checkbox', { name: '이메일 수신 동의' })).toBeInTheDocument();
   });
 });

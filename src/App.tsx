@@ -6,7 +6,7 @@ import { ModalProvider } from './components/ModalProvider';
 const globalTheme: ThemeConfig = {
   token: {
     fontFamily: 'Pretendard, -apple-system, system-ui, sans-serif',
-    colorBgContainer: '#ffffff',
+    colorBgContainer: '#FFFFFF',
     colorPrimary: '#4A7CFE',
   },
   components: {
@@ -15,7 +15,12 @@ const globalTheme: ThemeConfig = {
       titleMarginBottom: 0,
     },
     Layout: {
-      headerBg: '#ffffff',
+      headerBg: '#FFFFFF',
+    },
+    Form: {
+      itemMarginBottom: 20,
+      verticalLabelPadding: '0 0 6px',
+      labelColor: '#00000072',
     },
     Table: {
       headerBorderRadius: 0,

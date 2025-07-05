@@ -6,6 +6,8 @@ import { TableRecordDropdown } from './TableRecordDropdown';
 import { MoreOutlined, PlusOutlined } from '@ant-design/icons';
 import { MemberRecord, type Member } from '../records/member';
 import type { RecordSchema, RecordSchemaToType } from '../records/types';
+import { useModal } from '../hooks/useModal';
+import { RecordFormModal } from './RecordFormModal';
 
 const { Header, Content } = Layout;
 const { Title } = Typography;
@@ -107,15 +109,33 @@ const rowSelection: TableRowSelection<Member> = {};
 
 function MembersTable() {
   const { styles } = useStyle();
+  const { openModal } = useModal();
+
+  const handleAddMemberButtonClick = () => {
+    openModal(<RecordFormModal record={MemberRecord} />);
+  };
 
   return (
     <Layout>
       <Header className={styles.header}>
         <Title level={5}>회원 목록</Title>
-        <Button className={styles.addButton} type="primary" icon={<PlusOutlined />}>추가</Button>
+        <Button
+          className={styles.addButton}
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={handleAddMemberButtonClick}
+        >
+          추가
+        </Button>
       </Header>
       <Content>
-        <Table dataSource={dataSource} columns={columns} pagination={false} rowSelection={rowSelection} className={styles.table} />
+        <Table
+          className={styles.table}
+          dataSource={dataSource}
+          columns={columns}
+          pagination={false}
+          rowSelection={rowSelection}
+        />
       </Content>
     </Layout>
   );
