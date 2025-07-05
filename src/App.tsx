@@ -1,6 +1,7 @@
 import { StyleProvider } from '@ant-design/cssinjs';
 import { ConfigProvider, type ThemeConfig } from 'antd';
 import MembersTable from './components/MembersTable';
+import { ModalProvider } from './components/ModalProvider';
 
 const globalTheme: ThemeConfig = {
   token: {
@@ -30,7 +31,9 @@ function App() {
   return (
     <StyleProvider>
       <ConfigProvider theme={globalTheme}>
-        <MembersTable />
+        <ModalProvider>
+          <MembersTable />
+        </ModalProvider>
       </ConfigProvider>
     </StyleProvider>
   );
