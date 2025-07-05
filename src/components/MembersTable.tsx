@@ -34,78 +34,6 @@ const defaultMembers: (Member & { key: string })[] = [
   },
 ];
 
-const columns: TableColumnType<Member>[] = [
-  convertRecordToColumn(MemberRecord, 'name', {
-    width: 120,
-    filters: Array.from(new Set(defaultMembers.map(member => member.name))).map(name => ({
-      text: name,
-      value: name,
-    })),
-    onFilter: (value, record) => record.name === value,
-    filterDropdown: filterDropdownProps => <TableFilterDropdownMenu {...filterDropdownProps} />,
-  }),
-  convertRecordToColumn(MemberRecord, 'address', {
-    width: 249,
-    filters: Array.from(new Set(defaultMembers.map(member => member.address))).map(address => ({
-      text: address,
-      value: address,
-    })),
-    onFilter: (value, record) => record.address === value,
-    filterDropdown: filterDropdownProps => <TableFilterDropdownMenu {...filterDropdownProps} />,
-  }),
-  convertRecordToColumn(MemberRecord, 'memo', {
-    width: 249,
-    filters: Array.from(new Set(defaultMembers.map(member => member.memo))).map(memo => ({
-      text: memo,
-      value: memo,
-    })),
-    onFilter: (value, record) => record.memo === value,
-    filterDropdown: filterDropdownProps => <TableFilterDropdownMenu {...filterDropdownProps} />,
-  }),
-  convertRecordToColumn(MemberRecord, 'joinDate', {
-    width: 200,
-    filters: Array.from(new Set(defaultMembers.map(member => member.joinDate))).map(joinDate => ({
-      text: joinDate,
-      value: joinDate,
-    })),
-    onFilter: (value, record) => record.joinDate === value,
-    filterDropdown: filterDropdownProps => <TableFilterDropdownMenu {...filterDropdownProps} />,
-  }),
-  convertRecordToColumn(MemberRecord, 'job', {
-    width: 249,
-    filters: Array.from(new Set(defaultMembers.map(member => member.job))).map(job => ({
-      text: job,
-      value: job,
-    })),
-    onFilter: (value, record) => record.job === value,
-    filterDropdown: filterDropdownProps => <TableFilterDropdownMenu {...filterDropdownProps} />,
-  }),
-  convertRecordToColumn(MemberRecord, 'isEmailAgreed', {
-    width: 150,
-    filters: [
-      {
-        text: '선택됨',
-        value: true,
-      },
-      {
-        text: '선택 안함',
-        value: false,
-      },
-    ],
-    onFilter: (value, record) => record.isEmailAgreed === value,
-    filterDropdown: filterDropdownProps => <TableFilterDropdownMenu {...filterDropdownProps} />,
-  }),
-  {
-    title: '',
-    width: 48,
-    render: () => (
-      <TableRecordDropdown>
-        <Button aria-label="More Options" type="text" icon={<MoreOutlined />} />
-      </TableRecordDropdown>
-    ),
-  },
-];
-
 const rowSelection: TableRowSelection<Member> = {};
 
 function MembersTable() {
@@ -120,6 +48,78 @@ function MembersTable() {
     };
     openModal(<RecordFormModal record={MemberRecord} onSubmit={addMember} />);
   };
+
+  const columns: TableColumnType<Member>[] = [
+    convertRecordToColumn(MemberRecord, 'name', {
+      width: 120,
+      filters: Array.from(new Set(members.map(member => member.name))).map(name => ({
+        text: name,
+        value: name,
+      })),
+      onFilter: (value, record) => record.name === value,
+      filterDropdown: filterDropdownProps => <TableFilterDropdownMenu {...filterDropdownProps} />,
+    }),
+    convertRecordToColumn(MemberRecord, 'address', {
+      width: 249,
+      filters: Array.from(new Set(members.map(member => member.address))).map(address => ({
+        text: address,
+        value: address,
+      })),
+      onFilter: (value, record) => record.address === value,
+      filterDropdown: filterDropdownProps => <TableFilterDropdownMenu {...filterDropdownProps} />,
+    }),
+    convertRecordToColumn(MemberRecord, 'memo', {
+      width: 249,
+      filters: Array.from(new Set(members.map(member => member.memo))).map(memo => ({
+        text: memo,
+        value: memo,
+      })),
+      onFilter: (value, record) => record.memo === value,
+      filterDropdown: filterDropdownProps => <TableFilterDropdownMenu {...filterDropdownProps} />,
+    }),
+    convertRecordToColumn(MemberRecord, 'joinDate', {
+      width: 200,
+      filters: Array.from(new Set(members.map(member => member.joinDate))).map(joinDate => ({
+        text: joinDate,
+        value: joinDate,
+      })),
+      onFilter: (value, record) => record.joinDate === value,
+      filterDropdown: filterDropdownProps => <TableFilterDropdownMenu {...filterDropdownProps} />,
+    }),
+    convertRecordToColumn(MemberRecord, 'job', {
+      width: 249,
+      filters: Array.from(new Set(members.map(member => member.job))).map(job => ({
+        text: job,
+        value: job,
+      })),
+      onFilter: (value, record) => record.job === value,
+      filterDropdown: filterDropdownProps => <TableFilterDropdownMenu {...filterDropdownProps} />,
+    }),
+    convertRecordToColumn(MemberRecord, 'isEmailAgreed', {
+      width: 150,
+      filters: [
+        {
+          text: '선택됨',
+          value: true,
+        },
+        {
+          text: '선택 안함',
+          value: false,
+        },
+      ],
+      onFilter: (value, record) => record.isEmailAgreed === value,
+      filterDropdown: filterDropdownProps => <TableFilterDropdownMenu {...filterDropdownProps} />,
+    }),
+    {
+      title: '',
+      width: 48,
+      render: () => (
+        <TableRecordDropdown>
+          <Button aria-label="More Options" type="text" icon={<MoreOutlined />} />
+        </TableRecordDropdown>
+      ),
+    },
+  ];
 
   return (
     <Layout>

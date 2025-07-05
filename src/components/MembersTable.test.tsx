@@ -79,4 +79,25 @@ describe('<MembersTable />', () => {
     expect(screen.getByRole('combobox', { name: '직업' })).toBeInTheDocument();
     expect(screen.getByRole('checkbox', { name: '이메일 수신 동의' })).toBeInTheDocument();
   });
+
+  it('회원 추가 모달에서 추가 버튼을 클릭하면 회원 정보가 추가된다.', async () => {
+    const wrapper = createModalWrapper();
+    const screen = render(<MembersTable />, { wrapper });
+
+    await userEvent.click(screen.getByRole('button', { name: 'plus 추가' }));
+    await userEvent.type(screen.getByRole('textbox', { name: '이름' }), 'Jack');
+    await userEvent.type(screen.getByRole('textbox', { name: '주소' }), '123 Main St');
+    await userEvent.click(screen.getByRole('combobox', { name: '직업' }));
+    await userEvent.click(await screen.findByText('디자이너'));
+
+    expect(screen.getByRole('button', { name: '추가' })).toBeEnabled();
+    await userEvent.click(screen.getByRole('button', { name: '추가' }));
+
+    expect(screen.getByRole('cell', { name: 'Jack' })).toBeInTheDocument();
+
+    await userEvent.click(screen.getAllByRole('button', { name: 'filter' })[0]);
+    expect(screen.getByRole('menuitem', { name: 'John Doe' })).toBeInTheDocument();
+    expect(screen.getByRole('menuitem', { name: 'Foo Bar' })).toBeInTheDocument();
+    expect(screen.getByRole('menuitem', { name: 'Jack' })).toBeInTheDocument();
+  });
 });
