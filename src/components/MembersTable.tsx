@@ -49,6 +49,10 @@ function MembersTable() {
     openModal(<RecordFormModal record={MemberRecord} onSubmit={addMember} />);
   };
 
+  const handleDeleteMemberButtonClick = (index: number) => {
+    setMembers(prev => prev.filter((_, i) => i !== index));
+  };
+
   const columns: TableColumnType<Member>[] = [
     convertRecordToColumn(MemberRecord, 'name', {
       width: 120,
@@ -113,8 +117,8 @@ function MembersTable() {
     {
       title: '',
       width: 48,
-      render: () => (
-        <TableRecordDropdown>
+      render: (_, __, index) => (
+        <TableRecordDropdown onDelete={() => handleDeleteMemberButtonClick(index)}>
           <Button aria-label="More Options" type="text" icon={<MoreOutlined />} />
         </TableRecordDropdown>
       ),

@@ -100,4 +100,15 @@ describe('<MembersTable />', () => {
     expect(screen.getByRole('menuitem', { name: 'Foo Bar' })).toBeInTheDocument();
     expect(screen.getByRole('menuitem', { name: 'Jack' })).toBeInTheDocument();
   });
+
+  it('삭제 버튼을 클릭하면 회원 정보가 삭제된다.', async () => {
+    const wrapper = createModalWrapper();
+    const screen = render(<MembersTable />, { wrapper });
+
+    const rows = screen.getAllByRole('row');
+    await userEvent.click(within(rows[1]).getByRole('button', { name: 'More Options' }));
+    await userEvent.click(screen.getByRole('menuitem', { name: '삭제' }));
+
+    expect(screen.queryByRole('cell', { name: 'John Doe' })).not.toBeInTheDocument();
+  });
 });
