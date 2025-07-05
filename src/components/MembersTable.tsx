@@ -46,6 +46,7 @@ const columns: TableColumnType<Member>[] = [
       text: name,
       value: name,
     })),
+    onFilter: (value, record) => record.name === value,
     filterDropdown: filterDropdownProps => <TableFilterDropdownMenu {...filterDropdownProps} />,
   },
   {
@@ -57,6 +58,7 @@ const columns: TableColumnType<Member>[] = [
       text: address,
       value: address,
     })),
+    onFilter: (value, record) => record.address === value,
     filterDropdown: filterDropdownProps => <TableFilterDropdownMenu {...filterDropdownProps} />,
   },
   {
@@ -68,6 +70,7 @@ const columns: TableColumnType<Member>[] = [
       text: memo,
       value: memo,
     })),
+    onFilter: (value, record) => record.joinDate === value,
     filterDropdown: filterDropdownProps => <TableFilterDropdownMenu {...filterDropdownProps} />,
   },
   {
@@ -79,6 +82,7 @@ const columns: TableColumnType<Member>[] = [
       text: joinDate,
       value: joinDate,
     })),
+    onFilter: (value, record) => record.joinDate === value,
     filterDropdown: filterDropdownProps => <TableFilterDropdownMenu {...filterDropdownProps} />,
   },
   {
@@ -90,6 +94,7 @@ const columns: TableColumnType<Member>[] = [
       text: job,
       value: job,
     })),
+    onFilter: (value, record) => record.job === value,
     filterDropdown: filterDropdownProps => <TableFilterDropdownMenu {...filterDropdownProps} />,
   },
   {
@@ -108,6 +113,7 @@ const columns: TableColumnType<Member>[] = [
         value: false,
       },
     ],
+    onFilter: (value, record) => record.isEmailAgreed === value,
     filterDropdown: filterDropdownProps => <TableFilterDropdownMenu {...filterDropdownProps} />,
   },
 ];

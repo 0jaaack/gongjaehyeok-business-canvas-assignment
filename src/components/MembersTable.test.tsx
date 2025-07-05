@@ -43,5 +43,9 @@ describe('<MembersTable />', () => {
 
     expect(screen.getByRole('menuitem', { name: 'John Doe' })).toBeInTheDocument();
     expect(screen.getByRole('menuitem', { name: 'Foo Bar' })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('menuitem', { name: 'John Doe' }));
+    expect(screen.getByRole('cell', { name: 'John Doe' })).toBeInTheDocument();
+    expect(screen.queryByRole('cell', { name: 'Foo Bar' })).not.toBeInTheDocument();
   });
 });
