@@ -2,4 +2,4 @@ function App() {
   return <>Business Canvas Assignment</>;
 }
 
-export default App
+export default App;
