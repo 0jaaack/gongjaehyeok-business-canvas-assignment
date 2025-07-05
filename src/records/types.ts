@@ -31,3 +31,15 @@ export type CheckboxField = BaseField & {
 
 export type RecordField = TextField | TextareaField | DateField | SelectField | CheckboxField;
 export type RecordSchema = RecordField[];
+
+export type FieldToType<T extends RecordField>
+  = T extends TextField ? string
+    : T extends TextareaField ? string
+      : T extends DateField ? string
+        : T extends SelectField ? T['options'][number]['value']
+          : T extends CheckboxField ? boolean
+            : never;
+
+export type RecordSchemaToType<T extends readonly RecordField[]> = {
+  [K in T[number]['name']]: FieldToType<Extract<T[number], { name: K }>>
+};

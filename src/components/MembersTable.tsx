@@ -4,18 +4,10 @@ import { createStyles } from 'antd-style';
 import { TableFilterDropdownMenu } from './TableFilterDropdownMenu';
 import { TableRecordDropdown } from './TableRecordDropdown';
 import { MoreOutlined, PlusOutlined } from '@ant-design/icons';
+import { type Member } from '../records/member';
 
 const { Header, Content } = Layout;
 const { Title } = Typography;
-
-type Member = {
-  name: string;
-  address: string;
-  memo: string;
-  joinDate: string;
-  job: string;
-  isEmailAgreed: boolean;
-};
 
 const dataSource: (Member & { key: string })[] = [
   {

@@ -1,4 +1,4 @@
-import type { RecordSchema } from './types';
+import type { RecordSchema, RecordSchemaToType } from './types';
 
 export const MemberRecord = [
   {
@@ -43,3 +43,5 @@ export const MemberRecord = [
     required: false,
   },
 ] as const satisfies RecordSchema;
+
+export type Member = RecordSchemaToType<typeof MemberRecord>;
