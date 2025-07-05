@@ -4,7 +4,8 @@ import { createStyles } from 'antd-style';
 import { TableFilterDropdownMenu } from './TableFilterDropdownMenu';
 import { TableRecordDropdown } from './TableRecordDropdown';
 import { MoreOutlined, PlusOutlined } from '@ant-design/icons';
-import { type Member } from '../records/member';
+import { MemberRecord, type Member } from '../records/member';
+import type { RecordSchema, RecordSchemaToType } from '../records/types';
 
 const { Header, Content } = Layout;
 const { Title } = Typography;
@@ -31,10 +32,7 @@ const dataSource: (Member & { key: string })[] = [
 ];
 
 const columns: TableColumnType<Member>[] = [
-  {
-    title: '이름',
-    dataIndex: 'name',
-    key: 'name',
+  convertRecordToColumn(MemberRecord, 'name', {
     width: 120,
     filters: Array.from(new Set(dataSource.map(member => member.name))).map(name => ({
       text: name,
@@ -42,11 +40,8 @@ const columns: TableColumnType<Member>[] = [
     })),
     onFilter: (value, record) => record.name === value,
     filterDropdown: filterDropdownProps => <TableFilterDropdownMenu {...filterDropdownProps} />,
-  },
-  {
-    title: '주소',
-    dataIndex: 'address',
-    key: 'address',
+  }),
+  convertRecordToColumn(MemberRecord, 'address', {
     width: 249,
     filters: Array.from(new Set(dataSource.map(member => member.address))).map(address => ({
       text: address,
@@ -54,23 +49,17 @@ const columns: TableColumnType<Member>[] = [
     })),
     onFilter: (value, record) => record.address === value,
     filterDropdown: filterDropdownProps => <TableFilterDropdownMenu {...filterDropdownProps} />,
-  },
-  {
-    title: '메모',
-    dataIndex: 'memo',
-    key: 'memo',
+  }),
+  convertRecordToColumn(MemberRecord, 'memo', {
     width: 249,
     filters: Array.from(new Set(dataSource.map(member => member.memo))).map(memo => ({
       text: memo,
       value: memo,
     })),
-    onFilter: (value, record) => record.joinDate === value,
+    onFilter: (value, record) => record.memo === value,
     filterDropdown: filterDropdownProps => <TableFilterDropdownMenu {...filterDropdownProps} />,
-  },
-  {
-    title: '가입일',
-    dataIndex: 'joinDate',
-    key: 'joinDate',
+  }),
+  convertRecordToColumn(MemberRecord, 'joinDate', {
     width: 200,
     filters: Array.from(new Set(dataSource.map(member => member.joinDate))).map(joinDate => ({
       text: joinDate,
@@ -78,11 +67,8 @@ const columns: TableColumnType<Member>[] = [
     })),
     onFilter: (value, record) => record.joinDate === value,
     filterDropdown: filterDropdownProps => <TableFilterDropdownMenu {...filterDropdownProps} />,
-  },
-  {
-    title: '직업',
-    dataIndex: 'job',
-    key: 'job',
+  }),
+  convertRecordToColumn(MemberRecord, 'job', {
     width: 249,
     filters: Array.from(new Set(dataSource.map(member => member.job))).map(job => ({
       text: job,
@@ -90,13 +76,9 @@ const columns: TableColumnType<Member>[] = [
     })),
     onFilter: (value, record) => record.job === value,
     filterDropdown: filterDropdownProps => <TableFilterDropdownMenu {...filterDropdownProps} />,
-  },
-  {
-    title: '이메일 수신 동의',
-    dataIndex: 'isEmailAgreed',
-    key: 'isEmailAgreed',
+  }),
+  convertRecordToColumn(MemberRecord, 'isEmailAgreed', {
     width: 150,
-    render: (_, record) => <Checkbox checked={record.isEmailAgreed} />,
     filters: [
       {
         text: '선택됨',
@@ -109,7 +91,7 @@ const columns: TableColumnType<Member>[] = [
     ],
     onFilter: (value, record) => record.isEmailAgreed === value,
     filterDropdown: filterDropdownProps => <TableFilterDropdownMenu {...filterDropdownProps} />,
-  },
+  }),
   {
     title: '',
     width: 48,
@@ -180,5 +162,29 @@ const useStyle = createStyles(({ css, prefixCls, token }) => {
     `,
   };
 });
+
+function convertRecordToColumn<T extends RecordSchema>(
+  record: T,
+  name: T[number]['name'],
+  column: Partial<TableColumnType<RecordSchemaToType<T>>>,
+): TableColumnType<RecordSchemaToType<T>> {
+  const field = record.find(f => f.name === name);
+  if (field == null) {
+    throw new Error(`Field ${name} not found in record`);
+  }
+
+  return {
+    title: field.label,
+    dataIndex: field.name,
+    key: field.name,
+    ...(field.type === 'checkbox' && {
+      render: (_, record) => <Checkbox checked={!!record[field.name as keyof RecordSchemaToType<T>]} />,
+    }),
+    ...(field.type === 'select' && {
+      render: (_, record) => field.options.find(option => option.value === record[field.name as keyof RecordSchemaToType<T>])?.label,
+    }),
+    ...column,
+  };
+}
 
 export default MembersTable;

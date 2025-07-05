@@ -25,7 +25,7 @@ describe('<MembersTable />', () => {
     expect(within(rows[1]).getByRole('cell', { name: '서울 강남구' })).toBeInTheDocument();
     expect(within(rows[1]).getByRole('cell', { name: '외국인' })).toBeInTheDocument();
     expect(within(rows[1]).getByRole('cell', { name: '2024-10-02' })).toBeInTheDocument();
-    expect(within(rows[1]).getByRole('cell', { name: 'developer' })).toBeInTheDocument();
+    expect(within(rows[1]).getByRole('cell', { name: '개발자' })).toBeInTheDocument();
     expect(within(rows[1]).getAllByRole('checkbox').length).toBe(2);
     expect(within(rows[1]).getByRole('button', { name: 'More Options' })).toBeInTheDocument();
 
@@ -33,7 +33,7 @@ describe('<MembersTable />', () => {
     expect(within(rows[2]).getByRole('cell', { name: '서울 서초구' })).toBeInTheDocument();
     expect(within(rows[2]).getByRole('cell', { name: '한국인' })).toBeInTheDocument();
     expect(within(rows[2]).getByRole('cell', { name: '2024-10-01' })).toBeInTheDocument();
-    expect(within(rows[2]).getByRole('cell', { name: 'po' })).toBeInTheDocument();
+    expect(within(rows[2]).getByRole('cell', { name: 'PO' })).toBeInTheDocument();
     expect(within(rows[2]).getAllByRole('checkbox').length).toBe(2);
     expect(within(rows[2]).getByRole('button', { name: 'More Options' })).toBeInTheDocument();
   });
