@@ -2,6 +2,8 @@ import { StyleProvider } from '@ant-design/cssinjs';
 import { ConfigProvider, type ThemeConfig } from 'antd';
 import MembersTable from './components/MembersTable';
 import { ModalProvider } from './components/ModalProvider';
+import { ServiceProvider } from './components/ServiceProvider';
+import { createServices } from './services';
 
 const globalTheme: ThemeConfig = {
   token: {
@@ -32,13 +34,19 @@ const globalTheme: ThemeConfig = {
   },
 };
 
+const services = createServices({
+  storage: 'local-storage',
+});
+
 function App() {
   return (
     <StyleProvider>
       <ConfigProvider theme={globalTheme}>
-        <ModalProvider>
-          <MembersTable />
-        </ModalProvider>
+        <ServiceProvider services={services}>
+          <ModalProvider>
+            <MembersTable />
+          </ModalProvider>
+        </ServiceProvider>
       </ConfigProvider>
     </StyleProvider>
   );
