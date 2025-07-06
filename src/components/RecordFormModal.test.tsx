@@ -7,6 +7,8 @@ import userEvent from '@testing-library/user-event';
 
 const defaultProps: RecordFormModalProps<RecordSchema> = {
   open: true,
+  title: '레코드 추가',
+  okText: '추가',
   onSubmit: vi.fn(),
   record: [
     { name: 'name', label: '이름', type: 'text', required: true },
@@ -25,7 +27,7 @@ describe('<RecordFormModal />', () => {
     const screen = render(<RecordFormModal {...defaultProps} />, { wrapper });
 
     expect(screen.getByRole('dialog')).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: '회원 추가' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: '레코드 추가' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '추가' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: '취소' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'close' })).toBeInTheDocument();

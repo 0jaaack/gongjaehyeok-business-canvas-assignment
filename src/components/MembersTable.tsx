@@ -46,7 +46,7 @@ function MembersTable() {
     const addMember = (record: Member) => {
       setMembers(prev => [...prev, { ...record, key: (prev.length + 1).toString() }]);
     };
-    openModal(<RecordFormModal record={MemberRecord} onSubmit={addMember} />);
+    openModal(<RecordFormModal title="회원 추가" okText="추가" record={MemberRecord} onSubmit={addMember} />);
   };
 
   const handleDeleteMemberButtonClick = (index: number) => {

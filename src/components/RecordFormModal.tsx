@@ -11,12 +11,14 @@ const textFieldDefaultRule: Rule = { max: 20, message: '글자수 20을 초과�
 const textareaFieldDefaultRule: Rule = { max: 50, message: '글자수 50을 초과할 수 없습니다.' };
 
 export type RecordFormModalProps<T extends RecordSchema> = ModalProps & {
+  title: string;
+  okText: string;
   record: T;
   onSubmit: (record: RecordSchemaToType<T>) => void;
 };
 
 export function RecordFormModal<T extends RecordSchema>(props: RecordFormModalProps<T>) {
-  const { record, onSubmit, ...restProps } = props;
+  const { title, okText, record, onSubmit, ...restProps } = props;
 
   const { styles } = useStyle();
   const { closeModal } = useModal();
@@ -37,11 +39,11 @@ export function RecordFormModal<T extends RecordSchema>(props: RecordFormModalPr
       onCancel={closeModal}
       title={(
         <>
-          <Typography.Title level={5}>회원 추가</Typography.Title>
+          <Typography.Title level={5}>{title}</Typography.Title>
           <Button type="text" icon={<CloseOutlined />} size="small" className={styles.closeButton} onClick={closeModal} />
         </>
       )}
-      okText="추가"
+      okText={okText}
       okButtonProps={{ disabled: !isSubmittable }}
       onOk={() => {
         onSubmit(form.getFieldsValue());
