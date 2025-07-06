@@ -3,7 +3,11 @@ import { ConfigProvider, type ThemeConfig, Typography } from 'antd';
 
 const { Text } = Typography;
 
-const globalTheme: ThemeConfig = {};
+const globalTheme: ThemeConfig = {
+  token: {
+    fontFamily: 'Pretendard, -apple-system, system-ui, sans-serif',
+  },
+};
 
 function App() {
   return (
