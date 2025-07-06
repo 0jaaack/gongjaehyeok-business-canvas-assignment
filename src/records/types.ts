@@ -32,6 +32,10 @@ export type CheckboxField = BaseField & {
 export type RecordField = TextField | TextareaField | DateField | SelectField | CheckboxField;
 export type RecordSchema = RecordField[];
 
+type Prettify<T> = {
+  [K in keyof T]: T[K];
+} & {};
+
 export type FieldToType<T extends RecordField>
   = T extends TextField ? string
     : T extends TextareaField ? string
@@ -40,6 +44,8 @@ export type FieldToType<T extends RecordField>
           : T extends CheckboxField ? boolean
             : never;
 
-export type RecordSchemaToType<T extends readonly RecordField[]> = {
-  [K in T[number]['name']]: FieldToType<Extract<T[number], { name: K }>>
-};
+export type RecordSchemaToType<T extends readonly RecordField[]> = Prettify<{
+  [K in T[number]['name'] as Extract<T[number], { name: K }>['required'] extends true ? K : never]: FieldToType<Extract<T[number], { name: K }>>
+} & {
+  [K in T[number]['name'] as Extract<T[number], { name: K }>['required'] extends false ? K : never]?: FieldToType<Extract<T[number], { name: K }>>
+}>;

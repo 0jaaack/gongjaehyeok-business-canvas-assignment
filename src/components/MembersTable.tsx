@@ -72,37 +72,29 @@ function MembersTable() {
     }),
     convertRecordToColumn(MemberRecord, 'address', {
       width: 249,
-      filters: Array.from(new Set(members.map(member => member.address))).map(address => ({
-        text: address,
-        value: address,
-      })),
+      filters: Array.from(new Set(members.map(member => member.address)))
+        .flatMap(address => (address != null ? [{ text: address, value: address }] : [])),
       onFilter: (value, record) => record.address === value,
       filterDropdown: filterDropdownProps => <TableFilterDropdownMenu {...filterDropdownProps} />,
     }),
     convertRecordToColumn(MemberRecord, 'memo', {
       width: 249,
-      filters: Array.from(new Set(members.map(member => member.memo))).map(memo => ({
-        text: memo,
-        value: memo,
-      })),
+      filters: Array.from(new Set(members.map(member => member.memo)))
+        .flatMap(memo => (memo != null ? [{ text: memo, value: memo }] : [])),
       onFilter: (value, record) => record.memo === value,
       filterDropdown: filterDropdownProps => <TableFilterDropdownMenu {...filterDropdownProps} />,
     }),
     convertRecordToColumn(MemberRecord, 'joinDate', {
       width: 200,
-      filters: Array.from(new Set(members.map(member => member.joinDate))).map(joinDate => ({
-        text: joinDate,
-        value: joinDate,
-      })),
+      filters: Array.from(new Set(members.map(member => member.joinDate)))
+        .flatMap(joinDate => (joinDate != null ? [{ text: joinDate, value: joinDate }] : [])),
       onFilter: (value, record) => record.joinDate === value,
       filterDropdown: filterDropdownProps => <TableFilterDropdownMenu {...filterDropdownProps} />,
     }),
     convertRecordToColumn(MemberRecord, 'job', {
       width: 249,
-      filters: Array.from(new Set(members.map(member => member.job))).map(job => ({
-        text: job,
-        value: job,
-      })),
+      filters: Array.from(new Set(members.map(member => member.job)))
+        .flatMap(job => (job != null ? [{ text: job, value: job }] : [])),
       onFilter: (value, record) => record.job === value,
       filterDropdown: filterDropdownProps => <TableFilterDropdownMenu {...filterDropdownProps} />,
     }),
