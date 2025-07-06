@@ -1,69 +1,130 @@
-# React + TypeScript + Vite
+# 비즈니스 캔버스 프론트엔드 과제
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+반갑습니다. 비즈니스 캔버스 지원자 공재혁입니다.
 
-Currently, two official plugins are available:
+이번 과제는 어떻게 레코드와 필드를 조합해 매끄럽게 폼이나 테이블을 다룰 수 있을까 고민했던 과제였습니다. 추상화에 대해 고민하면서 높은 디자인 완성도를 만들기 위해 작업했습니다.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+구현에 관한 세부적인 사항들은 아래에 기술하였습니다. 감사합니다.
 
-## Expanding the ESLint configuration
+## 레코드 스키마
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+이번 과제에서 중요하게 여겼던 부분은 레코드를 어떻게 이끌어나갈 것인가입니다. 과제에서 중점적으로 추상화에 대해 집중한만큼 어떻게 과제에서 해결해야하는 문제들을 추상적으로 봐라봐야 할까 고민했습니다. 레코드를 생각해봤을 때 테이블을 레코드의 표현, 그리고 폼을 레코드의 생성과 수정의 표현이라고 생각해봤습니다. 폼, 테이블은 일종의 레코드의 변형 혹은 파생이라는 생각했습니다. 그래서 전체적으로 레코드를 정의하고, 그에 따른 다양한 표현을 파생할 수 있는 형식으로 풀어나갔습니다.
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+타입 수준에서 레코드의 다양한 파생 상태의 정합성을 보장해줄 수 있지 않을까 생각했지만, 복잡하고 정교한 타입 시스템을 구성해야하게 됩니다. 타입 레벨에 지나치게 파고들다보면 코드베이스가 경직될 수도 있다고 생각했습니다. 그보다는 간단한 인스턴스를 구성해 런타임에 생성되는 데이터를 통해 정합성을 보장해주거나 쉽게 파생된 데이터를 만들어주는게 더 간편하고 효과적인 방법입니다.
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+여기서 만들, 런타임에 생성되  인스턴스는 레코드의 메타적인 정보를 담고 있는 데이터입니다. `type`이나 `label` 등 필드를 구성하는 정보를 정의할 수 있는 레코드의 스키마 정보를 표현하기 위해 `RecordShema`와 `RecordSchema`의 필드(`RecordField`) 타입을 정했습니다.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```tsx
+type RecordField = TextField | TextareaField | DateField ...;
+type RecordSchema = RecordField[];
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+각 레코드 필드는 정의된 기본 필드 타입을 확장해 사용합니다. 새로운 필드를 추가하고싶을 때는 필드를 추가해주기만 하면 됩니다. 커스텀 필드를 기반으로 레코드에 필드를 추가하려면 레코드 스키마 인스턴스에 필드를 정의해주면 됩니다.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```tsx
+type BaseField = {
+  type: 'text' | 'textarea' | 'date' | 'select' | 'checkbox';
+  name: string;
+  label: string;
+  required: boolean;
+};
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+export type TextField = BaseField & {
+  type: 'text';
+};
+
+export type TextareaField = BaseField & {
+  type: 'textarea';
+};
+```
+
+이렇게 레코드 스키마를 정의하면 여러 장점이 생기는데요. 우선 별도로 도메인 타입을 추론하지 않아도 레코드 정의만으로 타입을 추론할 수 있게 됩니다. 다만 타입 스크립트의 타입 추론을 원활하게 활용하기 위해서 literal 타입으로 캐스팅되도록 `as const` 와 같은 것들을 추가해주어야 하지만요. 이를 통해서 유틸리티 타입인 `RecordSchemaToType` 을 정의했습니다. `RecordSchema`를 타입으로 추론할 수 있게되면 앞으로 소개할 폼 그리고 테이블의 타입 처리에 유리해집니다.
+
+```tsx
+// 따로 Member를 정의하지 않고 Member 타입 생성
+type Member = RecordSchemaToType<MemberRecord>;
+```
+
+## 테이블
+
+각 테이블은 column 정의를 기반으로 렌더링되는 경우가 많은데요. 이번 과제에서 사용했던 AntD도 `columns` prop을 받아 렌더링되는 패턴을 갖고 있습니다. 테이블의 컬럼 정의를 레코드를 이용해 만들면 좋지 않을까 생각했습니다. 
+
+다만 주의해야할 점은 필드 ≠ 컬럼이라는 점인데요. 컬럼 정의에는 각 필드의 스키마 정보 뿐아니라 필터 등과 같은 추가적인 정보도 필요합니다. 또 레코드에는 정의된 필드더라도 테이블에서 보여주길 원치않는 필드 혹은 레코드에는 없는 필드지만 테이블에서 보여주길 원하는 파생 데이터 컬럼같은 다양한 패턴이 나타날 수 있기에 섣부르게 지나친 추상화 수준을 갖는 건 좋지 않다고 판단했습니다. 이를테면 `RecordTable`이라는 컴포넌트를 만들어 `record` 데이터만 넣으면 테이블이 만들어지는 그런 정도로 말이죠.
+
+그래서 각 레코드 필드의 데이터를 통해, 컬럼 정보의 기초적인 정보를 구성할 수 있는 함수(`convertRecordToColumn`)를 만들었습니다. 위의 이유로 도메인에 독립적인 테이블을 만들기보다 각 도메인마다 테이블을 구성했습니다. 이미 AntD의 테이블 컴포넌트 자체의 추상화 수준이 꽤 높기 때문에 오히려 다양성을 열어두는게 좋은 판단이라 생각했습니다.
+
+```tsx
+function MembersTable() {
+  const columns: TableColumnType<Member>[] = [
+    convertRecordToColumn(MemberRecord, 'name', {
+      width: 120,
+      // convertRecordToColumn를 통해 name 컬럼 생성. 너비, 필터 등의 추가적인 컬럼 설정
+    }),
+    // 추가 컬럼 설정
+	];
+
+  return (
+    <Table columns={columns} ... />
+  );
+}
+```
+
+## 폼
+
+마찬가지로 폼도 레코드 스키마를 통해 정의됩니다. 폼은 각 도메인마다 독립적으로 정의할 수 있다고 판단해 테이블처럼 각 도메인 별로 생성되는 것이 아니라 `RecordFormModal`에서 생성될 수 있도록 했습니다. 폼과 관련한 동작들은 AntD의 useForm을 활용했습니다.
+
+레코드에 대한 폼이기 때문에, 레코드 필드가 가지는 기본 제약사항을 여기서 정의해두었습니다. 각 제약사항은 `RecordFormModal`의 테스트에서 관리됩니다. 다만 지금 시점에서 아쉬운건 레코드 필드 정의에 포함되어도 좋을 것 같았습니다. 필드를 정의하는 커스텀한 `validator` 함수의 경우 에러 메시지도 정의하는 등의 변경에 유연하지 못하거나 특정 validate 처리 방식 구현에 의존하는 경우가 있어 아예 Form에 별도로 정의했는데, 대신 `max`, `min` 같은 표현력 있는 값으로 표현한 뒤 Form과 같은 곳에서 활용할 수도 있지 않을까 생각이 듭니다.
+
+## 서비스
+
+과제의 데이터 처리 흐름이 `in-memory` 혹은 `local-storage` 둘 중 하나의 데이터 처리 방식으로 결정해 처리되도록 하기 때문에, 외부에서 서비스를 정의해서 어플리케이션에 주입할 수 있다면 어떨까 생각했습니다. 회사에서 사용하고 있는 `gRPC`에서 도메인을 서비스 단위로 구성해 정의하는 것에 어느정도 영감을 받았습니다.
+
+`MemberService`를 정의해 `InMemoryMemberService`, `LocalStorageMemeberSerive`를 만들었는데요. 프로덕션 환경과 같은 새로운 환경에서는 별도로 `Service`를 만들어 갈아끼우면 데이터 방식을 바꿀 수 있게 됩니다.
+
+그리고 `MemberService`를 이용해서 간단하게 `useMembers` 훅을 만들어주었습니다. 두 방식 모두 간단한 동기식 store이기 때문에 `react`의 `useSyncExternalStore`를 사용했습니다. 조금 까다로웠던 부분은 리렌더링 문제로 반환값이 stable해야하는 문제가 있었는데, `cache` 값을 두어서 일정하게 두었습니다.
+
+서비스를 구성하는 과정에서 `RecordSchema`의 파생이 한 번 더 나타나게 됩니다. 로컬 스토리지를 처리하는 과정에서 로컬 스토리지의 string(json) 데이터를 원하는 형태로 파싱해줄 상황이 필요했습니다. `zod`를 이용해서 런타임에 안전한 데이터로 파싱해주었는데요. 이 때도 위에 정의한 레코드 스키마를 이용해주었습니다. `zod` 파싱을 위한 유틸리티인 `createRecordSchema`와 타입 유틸리티 `RecordToZodSchema`를 만들어 타입을 만들어 사용했습니다.
+
+```tsx
+// Record 인스턴스를 zod 스키마로 변환
+const memberSchema = createRecordSchema(MemberRecord);
+
+// RecordSchema 타입을 zod 스키마 타입으로 변환
+type MemberSchema = RecordToZodSchema<MemberRecord>;
+```
+
+다만 완전히 Type 완전하지는 못해서 `as` 어셜션을 사용했기 때문에 불안정한 부분도 있습니다. 때문에 테스트 케이스를 좀 더 꼼꼼히 짜 안정성을 높여주었습니다.
+
+## 테스트
+
+각 작업 과정은 시작 단계에서부터 작업된 것이 아니라 처음에 raw하게 작업하다가 나중에 리팩토링을 거치면서 작업이 발전해나간 것인데요. 리팩토링 과정은 과정 전후의 차이점이 생기기 마련이라 충분히 잘 검증하는 것이 중요하다고 생각했습니다.
+
+하나의 컴포넌트 혹은 함수와 같은 모듈 단위에 지나치게 많은 역할이 집중되거나 하는 상황에서는 복잡성이 높음에도 불구하고 리팩토링을 쉽게 가져가지 못하는 상황이 일어나곤 합니다. 이번 과제에서는 그런 상황을 막기 위해서 테스트를 통해서 리팩토링의 안정성을 높였습니다. 각 코드 로직들이 해체되고 재조립되는 과정에서 불안정한 상황을 최대한 줄였는데, 일하면서 높은 테스트 커버리지의 로직을 다룰 때 훨씬 리팩토링하기 편했던 경험을 되살렸었습니다.
+
+일례로 테이블의 컬럼 정의를 레코드 스키마 기반으로 바꾸는 작업에서 코드 상의 실수가 있었는데요. `‘이메일 수신 동의’`라는 `label`이 `‘이메일 동의’`라는 `label`로 작성하게 되었습니다. 이런 사소한 부분은 발견하기 쉽지 않은데, 테스트 단계에서 빠르게 검증되어서 실수를 재빨리 파악할 수 있었습니다.
+
+## 커밋
+
+각 작업 단위가 독립적인 하나의 완성된 작업이 될 수 있도록 작업했습니다. 아토믹 커밋 방식을 지향했는데요. 작업의 각 단계가 독립적이기 때문에 특정 상황에 작업 사항을 되돌려도 온전히 런타임에 안전한 상황이 되도록 했습니다.
+
+코드 베이스에서의 추상화가 어플리케이션과 제품이 가진 문제들의 해상도를 높여주고 해결하기 쉽게 만들어준다면, 작업 단계에서의 추상화는 어렵고 복잡한 작업의 해상도를 높여주고 파악 가능하게 만들어준다고 생각합니다.
+
+평소에도 작업할 때 이런 방식으로 작업하는데요. 덕분에 작업량이 많아져도 수 백줄 단위의 변경사항으로 잘라내 PR을 구성할 수 있습니다. 예를 들어 이번 작업의 변경 사항은 처음 커밋에서 lock 파일을 제외하고 2천 줄 정도가 추가되었는데요. 만약 일하는 상황이었다면 4 ~ 5개의 PR로 쪼개서 나누어 올릴 수 있습니다.
+
+## 기술 스택
+
+- React
+- Typescript
+- Antd
+- Vitest / React Testing Library / Happy-Dom
+- zod
+- pnpm
+
+## 실행 방법
+
+```tsx
+$ pnpm run dev // 개발 서버 실행
+$ pnpm test // 테스트 실행
+$ pnpm run dev:in-memory // cross-env VITE_STORAGE=in-memory vite 를 간단하게 만든 스크립트
+$ pnpm run dev:local-storage // cross-env VITE_STORAGE=local-storage vite 를 간단하게 만든 스크립트
 ```
