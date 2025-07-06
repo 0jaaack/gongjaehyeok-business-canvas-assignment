@@ -4,6 +4,7 @@ import MembersTable from './components/MembersTable';
 import { ModalProvider } from './components/ModalProvider';
 import { ServiceProvider } from './components/ServiceProvider';
 import { createServices } from './services';
+import { STORAGE } from './env';
 
 const globalTheme: ThemeConfig = {
   token: {
@@ -35,7 +36,7 @@ const globalTheme: ThemeConfig = {
 };
 
 const services = createServices({
-  storage: 'local-storage',
+  storage: STORAGE ?? 'local-storage',
 });
 
 function App() {

@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:in-memory": "cross-env VITE_STORAGE=in-memory vite",
+    "dev:local-storage": "cross-env VITE_STORAGE=local-storage vite",
     "build": "tsc -b && vite build",
     "lint": "eslint . --fix",
     "preview": "vite preview",
@@ -32,6 +34,7 @@
     "@types/react-dom": "^18.2.0",
     "@vitejs/plugin-react-swc": "^3.10.2",
     "@vitest/ui": "3.2.4",
+    "cross-env": "^7.0.3",
     "eslint": "^9.29.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
