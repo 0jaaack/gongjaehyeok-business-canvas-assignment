@@ -1,7 +1,7 @@
 import { render, within, cleanup } from '@testing-library/react';
 import { describe, it, expect, afterEach } from 'vitest';
 import MembersTable from './MembersTable';
-import { createModalWrapper } from '../fixtures/wrappers';
+import { createCombineWrapper, createModalWrapper, createServiceProvider } from '../fixtures/wrappers';
 import userEvent from '@testing-library/user-event';
 
 describe('<MembersTable />', () => {
@@ -10,7 +10,8 @@ describe('<MembersTable />', () => {
   });
 
   it('회원 정보 테이블이 렌더링된다.', () => {
-    const screen = render(<MembersTable />);
+    const wrapper = createCombineWrapper([createModalWrapper(), createServiceProvider()]);
+    const screen = render(<MembersTable />, { wrapper });
 
     expect(screen.getByText('회원 목록')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'plus 추가' })).toBeInTheDocument();
@@ -41,7 +42,8 @@ describe('<MembersTable />', () => {
   });
 
   it('필터 아이콘을 클릭하면 드롭다운 메뉴가 나타난다.', async () => {
-    const screen = render(<MembersTable />);
+    const wrapper = createCombineWrapper([createModalWrapper(), createServiceProvider()]);
+    const screen = render(<MembersTable />, { wrapper });
 
     const nameFilterTrigger = screen.getAllByRole('button', { name: 'filter' })[0];
     await userEvent.click(nameFilterTrigger);
@@ -55,7 +57,8 @@ describe('<MembersTable />', () => {
   });
 
   it('각 행에 있는 더보기 버튼을 클릭하면 드롭다운 메뉴가 나타난다.', async () => {
-    const screen = render(<MembersTable />);
+    const wrapper = createCombineWrapper([createModalWrapper(), createServiceProvider()]);
+    const screen = render(<MembersTable />, { wrapper });
 
     const moreOptionsButton = screen.getAllByRole('button', { name: 'More Options' })[0];
     await userEvent.click(moreOptionsButton);
@@ -65,7 +68,7 @@ describe('<MembersTable />', () => {
   });
 
   it('추가 버튼을 클릭하면 회원 추가 모달이 나타난다.', async () => {
-    const wrapper = createModalWrapper();
+    const wrapper = createCombineWrapper([createModalWrapper(), createServiceProvider()]);
     const screen = render(<MembersTable />, { wrapper });
 
     await userEvent.click(screen.getByRole('button', { name: 'plus 추가' }));
@@ -81,7 +84,7 @@ describe('<MembersTable />', () => {
   });
 
   it('회원 추가 모달에서 추가 버튼을 클릭하면 회원 정보가 추가된다.', async () => {
-    const wrapper = createModalWrapper();
+    const wrapper = createCombineWrapper([createModalWrapper(), createServiceProvider()]);
     const screen = render(<MembersTable />, { wrapper });
 
     await userEvent.click(screen.getByRole('button', { name: 'plus 추가' }));
@@ -102,7 +105,7 @@ describe('<MembersTable />', () => {
   });
 
   it('삭제 버튼을 클릭하면 회원 정보가 삭제된다.', async () => {
-    const wrapper = createModalWrapper();
+    const wrapper = createCombineWrapper([createModalWrapper(), createServiceProvider()]);
     const screen = render(<MembersTable />, { wrapper });
 
     const rows = screen.getAllByRole('row');
@@ -113,7 +116,7 @@ describe('<MembersTable />', () => {
   });
 
   it('수정 버튼을 클릭하면 회원 정보가 수정된다.', async () => {
-    const wrapper = createModalWrapper();
+    const wrapper = createCombineWrapper([createModalWrapper(), createServiceProvider()]);
     const screen = render(<MembersTable />, { wrapper });
 
     const rows = screen.getAllByRole('row');

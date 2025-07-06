@@ -7,32 +7,12 @@ import { MoreOutlined, PlusOutlined } from '@ant-design/icons';
 import { MemberRecord, type Member } from '../records/member';
 import type { RecordSchema, RecordSchemaToType } from '../records/types';
 import { useModal } from '../hooks/useModal';
-import { useState } from 'react';
 import { RecordFormModal } from './RecordFormModal';
+import { useMembers } from '../hooks/useMembers';
+import { useMemo } from 'react';
 
 const { Header, Content } = Layout;
 const { Title } = Typography;
-
-const defaultMembers: (Member & { key: string })[] = [
-  {
-    key: '1',
-    name: 'John Doe',
-    address: '서울 강남구',
-    memo: '외국인',
-    joinDate: '2024-10-02',
-    job: 'developer',
-    isEmailAgreed: true,
-  },
-  {
-    key: '2',
-    name: 'Foo Bar',
-    address: '서울 서초구',
-    memo: '한국인',
-    joinDate: '2024-10-01',
-    job: 'po',
-    isEmailAgreed: false,
-  },
-];
 
 const rowSelection: TableRowSelection<Member> = {};
 
@@ -40,24 +20,18 @@ function MembersTable() {
   const { styles } = useStyle();
   const { openModal } = useModal();
 
-  const [members, setMembers] = useState<(Member & { key: string })[]>(defaultMembers);
+  const [members, actions] = useMembers();
+  const membersWithKey = useMemo(() => members.map((member, index) => ({
+    ...member,
+    key: index.toString(),
+  })), [members]);
 
   const handleAddMemberButtonClick = () => {
-    const addMember = (record: Member) => {
-      setMembers(prev => [...prev, { ...record, key: (prev.length + 1).toString() }]);
-    };
-    openModal(<RecordFormModal title="회원 추가" okText="추가" record={MemberRecord} onSubmit={addMember} />);
+    openModal(<RecordFormModal title="회원 추가" okText="추가" record={MemberRecord} onSubmit={actions.addMember} />);
   };
 
   const handleEditMemberButtonClick = (index: number) => {
-    const editMember = (record: Member) => {
-      setMembers(prev => prev.map((member, i) => i === index ? { ...member, ...record } : member));
-    };
-    openModal(<RecordFormModal title="회원 수정" okText="수정" record={MemberRecord} defaultValues={members[index]} onSubmit={editMember} />);
-  };
-
-  const handleDeleteMemberButtonClick = (index: number) => {
-    setMembers(prev => prev.filter((_, i) => i !== index));
+    openModal(<RecordFormModal title="회원 수정" okText="수정" record={MemberRecord} defaultValues={members[index]} onSubmit={record => actions.updateMember(index, record)} />);
   };
 
   const columns: TableColumnType<Member>[] = [
@@ -119,7 +93,7 @@ function MembersTable() {
       render: (_, __, index) => (
         <TableRecordDropdown
           onEdit={() => handleEditMemberButtonClick(index)}
-          onDelete={() => handleDeleteMemberButtonClick(index)}
+          onDelete={() => actions.deleteMember(index)}
         >
           <Button aria-label="More Options" type="text" icon={<MoreOutlined />} />
         </TableRecordDropdown>
@@ -143,7 +117,7 @@ function MembersTable() {
       <Content>
         <Table
           className={styles.table}
-          dataSource={members}
+          dataSource={membersWithKey}
           columns={columns}
           pagination={false}
           rowSelection={rowSelection}
