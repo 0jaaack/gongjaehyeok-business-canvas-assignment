@@ -1,7 +1,8 @@
-import { render, within, fireEvent, cleanup } from '@testing-library/react';
+import { render, within, cleanup } from '@testing-library/react';
 import { describe, it, expect, afterEach } from 'vitest';
 import MembersTable from './MembersTable';
 import { createModalWrapper } from '../fixtures/wrappers';
+import userEvent from '@testing-library/user-event';
 
 describe('<MembersTable />', () => {
   afterEach(() => {
@@ -39,25 +40,25 @@ describe('<MembersTable />', () => {
     expect(within(rows[2]).getByRole('button', { name: 'More Options' })).toBeInTheDocument();
   });
 
-  it('필터 아이콘을 클릭하면 드롭다운 메뉴가 나타난다.', () => {
+  it('필터 아이콘을 클릭하면 드롭다운 메뉴가 나타난다.', async () => {
     const screen = render(<MembersTable />);
 
     const nameFilterTrigger = screen.getAllByRole('button', { name: 'filter' })[0];
-    fireEvent.click(nameFilterTrigger);
+    await userEvent.click(nameFilterTrigger);
 
     expect(screen.getByRole('menuitem', { name: 'John Doe' })).toBeInTheDocument();
     expect(screen.getByRole('menuitem', { name: 'Foo Bar' })).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole('menuitem', { name: 'John Doe' }));
+    await userEvent.click(screen.getByRole('menuitem', { name: 'John Doe' }));
     expect(screen.getByRole('cell', { name: 'John Doe' })).toBeInTheDocument();
     expect(screen.queryByRole('cell', { name: 'Foo Bar' })).not.toBeInTheDocument();
   });
 
-  it('각 행에 있는 더보기 버튼을 클릭하면 드롭다운 메뉴가 나타난다.', () => {
+  it('각 행에 있는 더보기 버튼을 클릭하면 드롭다운 메뉴가 나타난다.', async () => {
     const screen = render(<MembersTable />);
 
     const moreOptionsButton = screen.getAllByRole('button', { name: 'More Options' })[0];
-    fireEvent.click(moreOptionsButton);
+    await userEvent.click(moreOptionsButton);
 
     expect(screen.getByRole('menuitem', { name: '수정' })).toBeInTheDocument();
     expect(screen.getByRole('menuitem', { name: '삭제' })).toBeInTheDocument();
@@ -67,7 +68,7 @@ describe('<MembersTable />', () => {
     const wrapper = createModalWrapper();
     const screen = render(<MembersTable />, { wrapper });
 
-    fireEvent.click(screen.getByRole('button', { name: 'plus 추가' }));
+    await userEvent.click(screen.getByRole('button', { name: 'plus 추가' }));
 
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     expect(screen.getByText('회원 추가')).toBeInTheDocument();

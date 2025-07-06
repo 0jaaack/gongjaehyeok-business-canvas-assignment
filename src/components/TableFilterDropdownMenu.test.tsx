@@ -1,7 +1,8 @@
-import { cleanup, fireEvent, render, within } from '@testing-library/react';
+import { cleanup, render, within } from '@testing-library/react';
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import type { FilterDropdownProps } from 'antd/es/table/interface';
 import { TableFilterDropdownMenu } from './TableFilterDropdownMenu';
+import userEvent from '@testing-library/user-event';
 
 const defaultProps: FilterDropdownProps = {
   prefixCls: 'ant-dropdown',
@@ -43,13 +44,13 @@ describe('<TableFilterDropdownMenu />', () => {
     expect(within(screen.getByRole('menuitem', { name: 'Foo Bar' })).getByRole('checkbox')).toBeChecked();
   });
 
-  it('메뉴 아이템을 클릭하면 setSelectedKeys가 호출된다.', () => {
+  it('메뉴 아이템을 클릭하면 setSelectedKeys가 호출된다.', async () => {
     const screen = render(<TableFilterDropdownMenu {...defaultProps} />);
 
-    fireEvent.click(screen.getByRole('menuitem', { name: 'John Doe' }));
+    await userEvent.click(screen.getByRole('menuitem', { name: 'John Doe' }));
     expect(defaultProps.setSelectedKeys).toHaveBeenCalledWith(['John Doe']);
 
-    fireEvent.click(screen.getByRole('menuitem', { name: 'Foo Bar' }));
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Foo Bar' }));
     expect(defaultProps.setSelectedKeys).toHaveBeenLastCalledWith(['Foo Bar']);
   });
 });
